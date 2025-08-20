@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>heercoder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Font: Orbitron for Gaming Style -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Font for Quotes -->
+  <style>
+    @font-face {
+      font-family: 'Heartless';
+      src: url('Heartless.ttf') format('truetype');
+    }
+
+    body {
+      font-family: 'Orbitron', sans-serif; /* Gaming Font for ALL text */
+    }
+
+    .quote-text {
+      font-family: 'Heartless', sans-serif; /* Only Quotes in Heartless */
+      font-size: 1.8rem;
+      color: #39FF14; /* Toxic Green */
+      transition: opacity 1s ease-in-out;
+    }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden bg-black relative">
+
+  <!-- Background Video -->
+  <video class="absolute top-0 left-0 w-full h-full object-cover -z-10" autoplay muted loop>
+    <source src="bg.mp4" type="video/mp4" />
+  </video>
+
+  <!-- Clock -->
+  <div class="absolute top-6 right-8 text-right">
+    <div id="clock" class="text-cyan-400 text-4xl font-bold"></div>
+  </div>
+
+  <!-- Quotes (Upper Only) -->
+  <div class="absolute top-6 left-1/2 transform -translate-x-1/2 text-center w-3/4">
+    <div id="quoteBox" class="quote-text">Loading...</div>
+  </div>
+
+  <!-- Layout -->
+  <div class="flex h-full">
+    
+    <!-- Sidebar -->
+    <div class="w-24 bg-white/20 backdrop-blur-md flex flex-col items-start justify-between py-5 shadow-2xl">
+      <div class="flex flex-col gap-8 pl-4">
+        <a href="https://chat.openai.com" target="_blank" class="p-2 rounded-xl hover:scale-110 transition-transform">
+          <img src="chat.png" alt="ChatGPT" class="w-12 h-12">
+        </a>
+        <a href="https://vscode.dev" target="_blank" class="p-2 rounded-xl hover:scale-110 transition-transform">
+          <img src="vs.png" alt="VS Code" class="w-12 h-12">
+        </a>
+        <a href="https://www.google.com/chrome/" target="_blank" class="p-2 rounded-xl hover:scale-110 transition-transform">
+          <img src="chrome.png" alt="Chrome" class="w-12 h-12">
+        </a>
+        <a href="https://github.com" target="_blank" class="p-2 rounded-xl hover:scale-110 transition-transform">
+          <img src="git.png" alt="GitHub" class="w-12 h-12">
+        </a>
+        <a href="https://open.spotify.com" target="_blank" class="p-2 rounded-xl hover:scale-110 transition-transform">
+          <img src="spot.png" alt="Spotify" class="w-12 h-12">
+        </a>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex items-center justify-center">
+      <div class="flex items-center w-full max-w-lg">
+        <!-- Search Bar -->
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Search…" 
+          class="flex-1 px-5 py-3 text-white bg-gradient-to-r from-gray-900 to-gray-800 border-2 border-transparent rounded-full focus:outline-none transition-all"
+        >
+        <!-- Search Button -->
+        <button 
+          id="searchBtn" 
+          class="ml-3 px-6 py-3 font-bold text-white rounded-full bg-gradient-to-r from-gray-900 to-gray-800 border-2 border-transparent hover:text-cyan-400 transition-all"
+        >
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notes Bar (Bottom Right) -->
+  <div class="absolute bottom-6 right-6 w-72 bg-white/10 backdrop-blur-md rounded-2xl p-4 shadow-xl border border-cyan-400">
+    <h2 class="text-cyan-400 text-lg font-bold mb-2">📝 Notes</h2>
+    <textarea id="notesArea" placeholder="Write your notes..." class="w-full h-32 p-2 rounded-lg bg-black/60 text-white resize-none focus:outline-none"></textarea>
+    <button id="saveNotes" class="mt-2 w-full py-2 rounded-lg bg-cyan-600 hover:bg-cyan-400 transition">Save</button>
+  </div>
+
+  <script>
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours();
+      let m = String(now.getMinutes()).padStart(2, '0');
+      let s = String(now.getSeconds()).padStart(2, '0');
+      let ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12;
+      h = h ? h : 12;
+      document.getElementById("clock").innerText = `${h}:${m}:${s} ${ampm}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Quotes
+    const quotes = [
+      "Those who abandon their comrades are worse than scum. - Obito",
+      "People live their lives bound by what they accept as correct and true. - Itachi",
+      "Wake up to reality. Nothing ever goes as planned. - Madara"
+    ];
+
+    let quoteIndex = 0;
+    const quoteBox = document.getElementById("quoteBox");
+
+    function changeQuote() {
+      quoteBox.style.opacity = 0;
+      setTimeout(() => {
+        quoteBox.innerText = quotes[quoteIndex];
+        quoteBox.style.opacity = 1;
+        quoteIndex = (quoteIndex + 1) % quotes.length;
+      }, 1000);
+    }
+
+    setInterval(changeQuote, 3000);
+    changeQuote();
+
+    // Search
+    const searchInput = document.getElementById("searchInput");
+    const searchBtn = document.getElementById("searchBtn");
+    function performSearch() {
+      const query = searchInput.value.trim();
+      if (query) {
+        const url = "https://www.google.com/search?q=" + encodeURIComponent(query);
+        window.open(url, "_blank");
+      }
+    }
+    searchInput.addEventListener("keydown", e => { if (e.key === "Enter") performSearch(); });
+    searchBtn.addEventListener("click", performSearch);
+
+    // Notes (Local Storage Save/Load)
+    const notesArea = document.getElementById("notesArea");
+    const saveNotes = document.getElementById("saveNotes");
+
+    // Load saved notes
+    notesArea.value = localStorage.getItem("userNotes") || "";
+
+    // Save notes
+    saveNotes.addEventListener("click", () => {
+      localStorage.setItem("userNotes", notesArea.value);
+      alert("Notes saved!");
+    });
+  </script>
+
+</body>
+</html>
